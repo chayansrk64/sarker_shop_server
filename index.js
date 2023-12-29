@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5000;
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 
@@ -39,12 +39,13 @@ async function run() {
     const cartCollection = client.db('sarker_shopDB').collection('carts');
 
 
-
+    // all products 
     app.get('/products', async(req, res) => {
         const result = await productCollection.find().toArray();
         res.send(result);
     });
 
+    // reviews
     app.get('/reviews', async(req, res) => {
         const result = await reviewCollection.find().toArray();
         res.send(result);
@@ -66,6 +67,13 @@ async function run() {
         const item = req.body;
         // console.log(item);
         const result = await cartCollection.insertOne(item);
+        res.send(result);
+    })
+
+    app.delete('/carts/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await cartCollection.deleteOne(query);
         res.send(result);
     })
 
