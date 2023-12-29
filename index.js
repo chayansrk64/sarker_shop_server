@@ -37,21 +37,36 @@ async function run() {
     const productCollection = client.db('sarker_shopDB').collection('products');
     const reviewCollection = client.db('sarker_shopDB').collection('reviews');
     const cartCollection = client.db('sarker_shopDB').collection('carts');
+    const userCollection = client.db('sarker_shopDB').collection('users');
 
 
-    // all products 
+
+
+    // users api
+    app.post('/users', async(req, res) => {
+        const user = req.body;
+        const query = { email: user.email };
+        const existingUser = await userCollection.findOne(query);
+        if(existingUser){
+          return res.send({message : "User already exists"})
+        }
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
+
+    //  products api
     app.get('/products', async(req, res) => {
         const result = await productCollection.find().toArray();
         res.send(result);
     });
 
-    // reviews
+    // reviews api
     app.get('/reviews', async(req, res) => {
         const result = await reviewCollection.find().toArray();
         res.send(result);
     })
 
-    // cart collection
+    // cart collection api
 
     app.get('/carts', async(req, res) => {
         const email = req.query.email;
