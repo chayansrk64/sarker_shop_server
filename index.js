@@ -54,6 +54,11 @@ async function run() {
         res.send(result);
     })
 
+    app.get('/users', async(req, res) => {
+        const result = await userCollection.find().toArray();
+        res.send(result);
+    })
+
     //  products api
     app.get('/products', async(req, res) => {
         const result = await productCollection.find().toArray();
