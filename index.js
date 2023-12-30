@@ -66,6 +66,17 @@ async function run() {
         res.send({ token });
     })
 
+    // verifyAdmin middleware
+     const verifyAdmin = async(req, res, next) => {
+        const email = req.decoded.email;
+        const query = {email: email};
+        const user = await userCollection.findOne(query);
+        if(user?.role !== 'admin'){
+          return res.status(403).send({error: true, message: 'forbidden request'})
+        }
+        next();
+     }
+
 
     // users api
     app.post('/users', async(req, res) => {
@@ -79,11 +90,13 @@ async function run() {
         res.send(result);
     })
 
-    app.get('/users', async(req, res) => {
+    // use verifyJWT before using verifyAdmin
+    app.get('/users', verifyJWT, verifyAdmin, async(req, res) => {
         const result = await userCollection.find().toArray();
         res.send(result);
     })
 
+    // get admin api
     app.get('/users/admin/:email', verifyJWT, async(req, res) => {
       const email = req.params.email;
       const query = {email: email};
@@ -95,6 +108,7 @@ async function run() {
       res.send(result)
   })
 
+  // create admin api
     app.patch('/users/admin/:id', async(req, res) => {
         const id = req.params.id;
         const filter = {_id: new ObjectId(id)};
