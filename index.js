@@ -133,11 +133,45 @@ async function run() {
         const result = await productCollection.find().toArray();
         res.send(result);
     });
-
-    app.post('/products', async(req, res) => {
+    // porduct upload
+    app.post('/products', verifyJWT, verifyAdmin, async(req, res) => {
         const product = req.body;
         const result = await productCollection.insertOne(product);
         res.send(result);
+    })
+    // product delete 
+    app.delete('/products/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await productCollection.deleteOne(query);
+        res.send(result);
+    })
+    // get single product
+    app.get('/products/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await productCollection.findOne(query);
+        res.send(result);
+    })
+    // update a single product
+    app.put('/products/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = { upsert: true };
+      const updateProduct = req.body;
+      const product = {
+        $set: {
+            image: updateProduct.image,
+            productName: updateProduct.productName,
+            brand: updateProduct.brand,
+            category: updateProduct.category,
+            price: updateProduct.price,
+            reviews: updateProduct.reviews,
+            description: updateProduct.description,
+        },
+      };
+      const result = await productCollection.updateOne(filter, product, options);
+      res.send(result);
     })
 
     // reviews api
