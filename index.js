@@ -161,7 +161,7 @@ async function run() {
       const updateProduct = req.body;
       const product = {
         $set: {
-            image: updateProduct.image,
+            // image: updateProduct.image,
             productName: updateProduct.productName,
             brand: updateProduct.brand,
             category: updateProduct.category,
@@ -177,6 +177,12 @@ async function run() {
     // reviews api
     app.get('/reviews', async(req, res) => {
         const result = await reviewCollection.find().toArray();
+        res.send(result);
+    })
+    // review post
+    app.post('/reviews', async(req, res) => {
+        const review = req.body;
+        const result = await reviewCollection.insertOne(review);
         res.send(result);
     })
 
