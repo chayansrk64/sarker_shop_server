@@ -187,7 +187,6 @@ async function run() {
     })
 
     // cart collection api
-
     app.get('/carts', verifyJWT, async(req, res) => {
         const email = req.query.email;
         if(!email){
