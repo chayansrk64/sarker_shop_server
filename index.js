@@ -230,6 +230,19 @@ async function run() {
         res.send(result)
     })
 
+    // transaction confirm
+    app.patch('/transaction/paid/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          role: "paid"
+        },
+      };
+      const result = await transactionCollection.updateOne(filter, updateDoc );
+      res.send(result);
+  })
+
 
 
 
