@@ -56,6 +56,7 @@ async function run() {
     const reviewCollection = client.db('sarker_shopDB').collection('reviews');
     const cartCollection = client.db('sarker_shopDB').collection('carts');
     const userCollection = client.db('sarker_shopDB').collection('users');
+    const transactionCollection = client.db('sarker_shopDB').collection('transactions');
 
 
 
@@ -216,6 +217,20 @@ async function run() {
         const result = await cartCollection.deleteOne(query);
         res.send(result);
     })
+
+    // transactions create
+    app.post('/transaction', async(req, res) => {
+        const transaction = req.body;
+        const result = await transactionCollection.insertOne(transaction);
+        res.send(result)
+    })
+    // transactions get for admin
+    app.get('/transaction', async(req, res) => {
+        const result = await transactionCollection.find().toArray();
+        res.send(result)
+    })
+
+
 
 
     // Send a ping to confirm a successful connection
